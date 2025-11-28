@@ -10,7 +10,7 @@
 # print(response["message"]["content"])
 
 # from agent.llm_setup import load_llm
-from agent.dspy_signatures import RouterModule
+from agent.dspy_signatures import RouterModule,PlannerModule
 
 import dspy
 
@@ -25,5 +25,8 @@ def load_llm():
 
 load_llm() 
 
-router = RouterModule()
-print(router("What were sales in March 2024?"))
+# router = RouterModule()
+# print(router("What were sales in March 2024?"))
+
+planner = PlannerModule()
+print(planner("What were sales between March and June 2024 for Beverages?"))

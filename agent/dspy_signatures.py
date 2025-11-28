@@ -22,7 +22,7 @@ class PlannerSignature(dspy.Signature):
         - category
         - KPI
     """
-    question = dspy.InputField("user question")
+    question = dspy.InputField(desc="the user question")
 
     start_date = dspy.OutputField(desc="start date extracted from question, YYYY-MM-DD or text")
     end_date = dspy.OutputField(desc="end date extracted from question, YYYY-MM-DD or text")
