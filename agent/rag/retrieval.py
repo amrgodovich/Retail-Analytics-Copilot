@@ -1,12 +1,20 @@
 import os
 import re
 from rank_bm25 import BM25Okapi
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
+stemmer = PorterStemmer()
+nltk.download('stopwords')
+nltk.download('punkt_tab')
+stop_words = set(stopwords.words('english'))
 
 class BM25Retriever:
     """
       1. loading docs
       2. Splitting into chunks
-      3. indexing using BM25
+      3. tokenizing and indexing using BM25
       4. returning top-k chunks
     """
 
@@ -19,6 +27,17 @@ class BM25Retriever:
         self.load_and_chunk()
         self.build_bm25()
 
+    # preprocessing
+    def preprocess(self, text):
+        text = text.lower()
+        tokens = nltk.word_tokenize(text)
+        tokens = [token for token in tokens if token.isalpha()]
+        tokens = [token for token in tokens if token not in stop_words]
+        tokens = [stemmer.stem(token) for token in tokens]
+        
+        return tokens
+
+    
     # loading and splitting
     def load_and_chunk(self):
         chunk_id = 0
@@ -34,6 +53,8 @@ class BM25Retriever:
             # split as paragraphs 
             paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
 
+            #
+
             # print(f"Loaded {len(paragraphs)} paragraphs from {filename}")
 
             for i, part in enumerate(paragraphs):
@@ -48,7 +69,7 @@ class BM25Retriever:
 
     # Tokeninzing & BM25 indexing
     def build_bm25(self):
-        self.tokenized_chunks = [chunk["text"].lower().split() for chunk in self.chunks]
+        self.tokenized_chunks = [self.preprocess(chunk["text"]) for chunk in self.chunks]
         if self.tokenized_chunks:
             self.bm25 = BM25Okapi(self.tokenized_chunks)
 
@@ -57,7 +78,7 @@ class BM25Retriever:
         """
             id, content, source (filename), score.
         """
-        query_tokens = query.lower().split()
+        query_tokens = self.preprocess(query) 
         # print("Query tokens:", query_tokens)
         scores = self.bm25.get_scores(query_tokens)
         # print("Scores:", scores)
@@ -85,4 +106,4 @@ class BM25Retriever:
         return results
 
 mytest = BM25Retriever()
-print(mytest.retrieve("aov", k=3))
+print(mytest.retrieve("unopened Beverages"))
