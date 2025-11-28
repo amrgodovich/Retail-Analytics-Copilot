@@ -1,0 +1,146 @@
+from langgraph.graph import StateGraph, END
+from typing import List, Dict, Any, Optional
+from agent.rag.retrieval import BM25Retriever
+from agent.tools.sqlite_tool import SQLiteTool
+
+db = SQLiteTool("data/northwind.sqlite")
+retriever = BM25Retriever(docs_folder="docs")
+
+
+class AgentState(dict):
+    question: str
+    mode: str                # rag | sql | hybrid
+    planner_output: dict     # extracted constraints
+    rag_chunks: list         # retrieved doc chunks
+    sql_query: str
+    sql_result: dict
+    final_answer: dict
+    retries: int
+
+
+
+def router_node(state: AgentState):
+    """
+        rag | sql | hybrid 
+    """
+    # TODO: use DSPy router module here
+    state["mode"] = "rag"   # placeholder
+    return state
+
+
+
+def retriever_node(state):
+    """
+    Retrieve top-k chunks using BM25.
+    Runs only if route is rag or hybrid.
+    """
+    mode = state.get("mode", "rag")
+
+    if mode not in ["rag", "hybrid"]:
+        state["rag_chunks"] = []
+        return state
+
+    question = state["question"]
+    chunks = retriever.retrieve(question, k=5)
+
+    state["rag_chunks"] = chunks
+    return state
+
+def planner_node(state: AgentState):
+    """
+    Extract constraints:
+        - date ranges
+        - category
+        - KPI
+    """
+    # TODO: call DSPy planner module
+    state["planner_output"] = {}
+    return state
+
+
+# NL SQL Generator
+
+def nlsql_node(state: AgentState):
+    """
+    Use DSPy to generate a valid SQLite query
+    based on planner output + DB schema.
+    """
+    # TODO: generate SQL
+    state["sql_query"] = ""
+    return state
+
+
+
+def executor_node(state):
+    sql_query = state.get("sql_query", "")
+
+    if not sql_query:
+        state["sql_result"] = {
+            "success": False,
+            "rows": [],
+            "error": "No SQL query generated"
+        }
+        return state
+
+    success, rows, error = db.run_sql(sql_query)
+
+    state["sql_result"] = {
+        "success": success,
+        "rows": rows,
+        "error": error
+    }
+
+    return state
+
+def synthesizer_node(state: AgentState):
+    """
+    Produce final answer with:
+      - final_answer
+      - citations
+      - explanation
+    Must match format_hint from the spec.
+    """
+    # TODO: call DSPy synthesis module
+    state["final_answer"] = {
+        "result": None,
+        "unit": "USD",
+        "explanation": "",
+        "citations": []
+    }
+    return state
+
+
+def repair_node(state: AgentState):
+    """
+    If SQL query failed or output is invalid:
+       retry NL→SQL or Synthesizer up to 2 times.
+    """
+    # TODO: implement retry logic
+    return state
+
+
+
+def build_graph():
+    graph = StateGraph(AgentState)
+
+    # Add nodes
+    graph.add_node("router", router_node)
+    graph.add_node("retriever", retriever_node)
+    graph.add_node("planner", planner_node)
+    graph.add_node("nlsql", nlsql_node)
+    graph.add_node("executor", executor_node)
+    graph.add_node("synthesizer", synthesizer_node)
+    graph.add_node("repair", repair_node)
+
+    # Edges (flow)
+    graph.set_entry_point("router")
+
+    graph.add_edge("router", "retriever")      # rag/hybrid
+    graph.add_edge("retriever", "planner")     # hybrid → plan
+    graph.add_edge("planner", "nlsql")         # hybrid/sql
+    graph.add_edge("nlsql", "executor")
+    graph.add_edge("executor", "synthesizer")
+    graph.add_edge("synthesizer", "repair")
+    graph.add_edge("repair", END)
+
+    return graph.compile()
