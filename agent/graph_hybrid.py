@@ -2,7 +2,9 @@ from langgraph.graph import StateGraph, END
 from typing import List, Dict, Any, Optional
 from agent.rag.retrieval import BM25Retriever
 from agent.tools.sqlite_tool import SQLiteTool
+from agent.dspy_signatures import RouterModule
 
+router = RouterModule()
 db = SQLiteTool("data/northwind.sqlite")
 retriever = BM25Retriever(docs_folder="docs")
 
@@ -23,17 +25,16 @@ def router_node(state: AgentState):
     """
         rag | sql | hybrid 
     """
-    # TODO: use DSPy router module here
-    state["mode"] = "rag"   # placeholder
+    question = state["question"]
+    result = router(question)
+    state["mode"] = result["mode"]
+    if state["mode"] not in ["rag", "sql", "hybrid"]:
+            state["mode"] = "hybrid"
     return state
 
 
 
 def retriever_node(state):
-    """
-    Retrieve top-k chunks using BM25.
-    Runs only if route is rag or hybrid.
-    """
     mode = state.get("mode", "rag")
 
     if mode not in ["rag", "hybrid"]:
