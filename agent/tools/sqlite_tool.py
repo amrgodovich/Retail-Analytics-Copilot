@@ -6,7 +6,7 @@ class SQLiteTool:
         self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row
 
-    def run_sql(self, sql: str):
+    def run_sql(self, sql):
         try:
             cur = self.conn.cursor()
             cur.execute(sql)
@@ -26,8 +26,9 @@ class SQLiteTool:
         cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
         return [row[0] for row in cur.fetchall()]
 
-    def get_schema(self):
+    def get_schema(self,table=None):
         schema = {}
+        # if not table:
         for table in self.get_tables():
             cur = self.conn.cursor()
             cur.execute(f"PRAGMA table_info('{table}')")
@@ -38,12 +39,22 @@ class SQLiteTool:
                     "type": row[2]
                 })
             schema[table] = cols
+        # else:
+        #     cur = self.conn.cursor()
+        #     cur.execute(f"PRAGMA table_info('{table}')")
+        #     cols = []
+        #     for row in cur.fetchall():
+        #         cols.append({
+        #             "name": row[1],
+        #             "type": row[2]
+        #         })
+        #     schema[table] = cols
         return schema
     
 
 mytest=SQLiteTool()
-print(mytest.get_schema())
-# success, rows, error = mytest.run_sql("SELECT * FROM Orders LIMIT 5;")
-# print("Success:", success) 
-# print("Rows:", rows)
-# print("Error:", error)
+# print(mytest.get_schema())
+success, rows, error = mytest.run_sql("SELECT * FROM Orders LIMIT 1;")
+print("Success:", success) 
+print("Rows:", rows)
+print("Error:", error)
