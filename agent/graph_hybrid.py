@@ -1,19 +1,25 @@
+from llm_setup import load_llm
 from langgraph.graph import StateGraph, END
 from typing import List, Dict, Any, Optional
-from agent.rag.retrieval import BM25Retriever
-from agent.tools.sqlite_tool import SQLiteTool
-from agent.dspy_signatures import RouterModule
+from rag.retrieval import BM25Retriever
+from tools.sqlite_tool import SQLiteTool
+from dspy_signatures import RouterModule
+from dspy_signatures import PlannerModule
 
+
+
+load_llm()   
 router = RouterModule()
+planner = PlannerModule()
 db = SQLiteTool("data/northwind.sqlite")
 retriever = BM25Retriever(docs_folder="docs")
 
 
 class AgentState(dict):
     question: str
-    mode: str                # rag | sql | hybrid
-    planner_output: dict     # extracted constraints
-    rag_chunks: list         # retrieved doc chunks
+    mode: str
+    planner_output: dict
+    rag_chunks: list
     sql_query: str
     sql_result: dict
     final_answer: dict
@@ -32,9 +38,7 @@ def router_node(state: AgentState):
             state["mode"] = "hybrid"
     return state
 
-
-
-def retriever_node(state):
+def retriever_node(state: AgentState):
     mode = state.get("mode", "rag")
 
     if mode not in ["rag", "hybrid"]:
@@ -46,31 +50,6 @@ def retriever_node(state):
 
     state["rag_chunks"] = chunks
     return state
-
-def planner_node(state: AgentState):
-    """
-    Extract constraints:
-        - date ranges
-        - category
-        - KPI
-    """
-    # TODO: call DSPy planner module
-    state["planner_output"] = {}
-    return state
-
-
-# NL SQL Generator
-
-def nlsql_node(state: AgentState):
-    """
-    Use DSPy to generate a valid SQLite query
-    based on planner output + DB schema.
-    """
-    # TODO: generate SQL
-    state["sql_query"] = ""
-    return state
-
-
 
 def executor_node(state):
     sql_query = state.get("sql_query", "")
@@ -92,6 +71,21 @@ def executor_node(state):
     }
 
     return state
+
+def planner_node(state: AgentState):
+    question = state["question"]
+    plan = planner(question)
+
+    state["planner_output"] = plan
+    return state
+
+def nlsql_node(state: AgentState):
+
+    state["sql_query"] = ""
+    return state
+
+
+
 
 def synthesizer_node(state: AgentState):
     """
@@ -145,3 +139,4 @@ def build_graph():
     graph.add_edge("repair", END)
 
     return graph.compile()
+
