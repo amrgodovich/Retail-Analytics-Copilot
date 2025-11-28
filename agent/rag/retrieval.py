@@ -57,17 +57,21 @@ class BM25Retriever:
         """
             id, content, source (filename), score.
         """
-        if not self.bm25:
-            return []
-
         query_tokens = query.lower().split()
+        # print("Query tokens:", query_tokens)
         scores = self.bm25.get_scores(query_tokens)
+        # print("Scores:", scores)
 
-        # get top-k indexes sorted by score
-        top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
+        score_index_pairs = []
+        for i in range(len(scores)):
+            score_index_pairs.append([scores[i], i])
+
+        score_index_pairs.sort(reverse=True)
+        top_related_indices = [pair[1] for pair in score_index_pairs[:k]]
+        print("Top related indices:", top_related_indices)
 
         results = []
-        for idx in top_indices:
+        for idx in top_related_indices:
             if scores[idx] <= 0:
                 continue
             chunk = self.chunks[idx]
@@ -81,4 +85,4 @@ class BM25Retriever:
         return results
 
 mytest = BM25Retriever()
-print(mytest.retrieve("AOV", k=3))
+print(mytest.retrieve("aov", k=3))
