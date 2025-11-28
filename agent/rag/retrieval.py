@@ -53,8 +53,6 @@ class BM25Retriever:
             # split as paragraphs 
             paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
 
-            #
-
             # print(f"Loaded {len(paragraphs)} paragraphs from {filename}")
 
             for i, part in enumerate(paragraphs):
@@ -105,5 +103,5 @@ class BM25Retriever:
 
         return results
 
-mytest = BM25Retriever()
-print(mytest.retrieve("unopened Beverages"))
+# mytest = BM25Retriever()
+# print(mytest.retrieve("According to the product policy, what is the return window (days) for unopened Beverages?"))

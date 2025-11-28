@@ -52,9 +52,9 @@ class SQLiteTool:
         return schema
     
 
-mytest=SQLiteTool()
-# print(mytest.get_schema())
-success, rows, error = mytest.run_sql("SELECT * FROM Orders LIMIT 1;")
-print("Success:", success) 
-print("Rows:", rows)
-print("Error:", error)
+# mytest=SQLiteTool()
+# # print(mytest.get_schema())
+# success, rows, error = mytest.run_sql("SELECT * FROM Orders LIMIT 1;")
+# print("Success:", success) 
+# print("Rows:", rows)
+# print("Error:", error)
