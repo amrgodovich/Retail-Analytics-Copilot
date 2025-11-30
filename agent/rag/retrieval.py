@@ -6,8 +6,8 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 stemmer = PorterStemmer()
-# nltk.download('stopwords')
-# nltk.download('punkt_tab')
+nltk.download('stopwords')
+nltk.download('punkt_tab')
 stop_words = set(stopwords.words('english'))
 
 class BM25Retriever:
@@ -102,6 +102,3 @@ class BM25Retriever:
             })
 
         return results
-
-# mytest = BM25Retriever()
-# print(mytest.retrieve("According to the product policy, what is the return window (days) for unopened Beverages?"))

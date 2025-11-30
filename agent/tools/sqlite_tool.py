@@ -2,7 +2,7 @@ import sqlite3
 
 class SQLiteTool:
     def __init__(self, db_path="data/northwind.sqlite"):
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path,check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
 
     def run_sql(self, sql):
@@ -42,20 +42,9 @@ class SQLiteTool:
             cur.execute(f"PRAGMA table_info('{table}')")
             cols = []
             for row in cur.fetchall():
-                cols.append(row[1])
-                # cols.append({
-                #     "name": row[1]
-                #     ,"type": row[2]
-                # })
+                cols.append({
+                    "name": row[1]
+                    ,"type": row[2]
+                })
             schema[table] = cols
         return schema
-
-    
-
-# mytest=SQLiteTool()
-# # print(mytest.get_schema())
-# res= mytest.run_sql("SELECT * FROM Orders LIMIT 1;")
-# print(res)
-# print("Success:", success) 
-# print("Rows:", rows)
-# print("Error:", error)
