@@ -1,9 +1,8 @@
 from langgraph.graph import StateGraph, END
-from typing import List, Dict, Any, Optional,TypedDict
+from typing import List, Dict, Any, TypedDict
 from agent.rag.retrieval import BM25Retriever
 from agent.tools.sqlite_tool import SQLiteTool
 from agent.dspy_signatures import RouterModule,SynthesizerModule,PlannerModule,NLtoSQLModule
-import os
 from dotenv import load_dotenv
 import json
 from agent.llm_set_up import load_llm_gemini
@@ -194,4 +193,11 @@ app = graph.compile()
 
 # result = app.invoke({"id":"hybrid_top_category_qty_summer_1997","question":"hybird, During 'Summer Beverages 1997' as defined in the marketing calendar, which product category had the highest total quantity sold? Return {category:str, quantity:int}.","format_hint":"{category:str, quantity:int}"})
 
-# print(result)
+# final_output = {
+#     "id": result.get("id"),
+#     "final_answer": result.get("final_answer"),
+#     "sql": result.get("sql_query",""),
+#     "confidence": result.get("confidence", 0.0),
+#     "explanation": result.get("explanation"),
+#     "citation": result.get("citations", [])
+# }
