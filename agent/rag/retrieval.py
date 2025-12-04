@@ -87,7 +87,7 @@ class BM25Retriever:
 
         score_index_pairs.sort(reverse=True)
         top_related_indices = [pair[1] for pair in score_index_pairs[:k]]
-        print("Top related indices:", top_related_indices)
+        # print("Top related indices:", top_related_indices)
 
         results = []
         for idx in top_related_indices:

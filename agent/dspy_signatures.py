@@ -87,7 +87,7 @@ class SynthesizerModule(dspy.Module):
             rag_chunks=rag_chunks,
             sql_result=sql_result,
         )
-        print("synth result:", result)
+        # print("synth result:", result)
         return result
     
 
