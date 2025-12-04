@@ -50,6 +50,8 @@ def router_node(state: State) -> dict:
 
 # Node: Retriever
 def retriever_node(state: State) -> dict:
+    if state["mode"] != "rag":
+        return {}
     chunks = retriever.retrieve(state["question"], k=4)
     return {"rag_chunks": chunks}
 
@@ -60,12 +62,16 @@ def planner_node(state: State) -> dict:
 
 # Node: NL → SQL
 def nl_to_sql_node(state: State) -> dict:
-    schema = sql_tool.get_schema()
-    sql = nl_to_sql(question=state["question"], schema=str(schema))["sql"]
+    if state["mode"] == "rag":
+        return {}
+    dbschema = sql_tool.get_schema()
+    sql = nl_to_sql(question=state["question"],planner_output=state["planner_output"] ,dbschema=dbschema)['sql_query']
     return {"sql_query": sql}
 
 # Node: SQL Executor
 def sql_node(state: State) -> dict:
+    if state["mode"] == "rag":
+        return {}
     result = sql_tool.run_sql(state["sql_query"])
     return {"sql_result": result}
 
@@ -190,14 +196,3 @@ graph.add_edge("end", END)
 
 app = graph.compile()
 
-
-# result = app.invoke({"id":"hybrid_top_category_qty_summer_1997","question":"hybird, During 'Summer Beverages 1997' as defined in the marketing calendar, which product category had the highest total quantity sold? Return {category:str, quantity:int}.","format_hint":"{category:str, quantity:int}"})
-
-# final_output = {
-#     "id": result.get("id"),
-#     "final_answer": result.get("final_answer"),
-#     "sql": result.get("sql_query",""),
-#     "confidence": result.get("confidence", 0.0),
-#     "explanation": result.get("explanation"),
-#     "citation": result.get("citations", [])
-# }
