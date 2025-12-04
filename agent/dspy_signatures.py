@@ -96,6 +96,7 @@ class NLtoSQLSignature(dspy.Signature):
     question = InputField(desc="the user question")
     planner_output = InputField(desc="the extracted constraints from the planner")
     dbschema = InputField(desc="database schema as a string")
+    rag_chunks = InputField(desc="retrieved document chunks for context")
     sql_query = OutputField(desc="the generated SQL query to run against the database")
 
 class NLtoSQLModule(dspy.Module):
@@ -103,8 +104,8 @@ class NLtoSQLModule(dspy.Module):
         super().__init__()
         self.predict = Predict(NLtoSQLSignature)
 
-    def forward(self, question: str, planner_output: dict, dbschema: str):
-        result = self.predict(question=question, planner_output=planner_output, dbschema=dbschema)
+    def forward(self, question: str, planner_output: dict, dbschema: str, rag_chunks: list):
+        result = self.predict(question=question, planner_output=planner_output, dbschema=dbschema, rag_chunks=rag_chunks)
         sql_query = str(result.sql_query).strip() if getattr(result, "sql_query", None) is not None else ""
         return {"sql_query": sql_query}
 

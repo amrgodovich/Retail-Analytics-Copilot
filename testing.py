@@ -90,6 +90,7 @@
 
 from agent.graph_hybrid import app
 if __name__ == "__main__":
+    # result = app.invoke({"id":"rag_example_1","question":"how many products are sold in year 2012? Return an integer.","format_hint":"int"})
     result = app.invoke({"id":"rag_example_1","question":"According to the product policy, what is the return window (days) for unopened Beverages? Return an integer.","format_hint":"int"})
 
     final_output = {
