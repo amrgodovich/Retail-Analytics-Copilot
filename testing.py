@@ -90,16 +90,31 @@
 
 from agent.graph_hybrid import app
 if __name__ == "__main__":
-    # result = app.invoke({"id":"rag_example_1","question":"how many products are sold in year 2012? Return an integer.","format_hint":"int"})
-    result = app.invoke({"id":"rag_example_1","question":"According to the product policy, what is the return window (days) for unopened Beverages? Return an integer.","format_hint":"int"})
+    # result = app.invoke({"id":"rag_example_1","question":"what is the most product sold in year 1990? Return an string.","format_hint":"str"})
+    # result = app.invoke({"id":"rag_example_1","question":"do this query at db: select name,val_time from Products and return results","format_hint":"str"})
+    # result = app.invoke({"id":"rag_example_1","question":"According to the product policy, what is the return window (days) for unopened Beverages? Return an integer.","format_hint":"int"})
+    # result = app.invoke({"id":"hybrid_top_category_qty_summer_1997","question":"hybird question, During 'Summer Beverages 1997' as defined in the marketing calendar, which product category had the highest total quantity sold? Return {category:str, quantity:int}.","format_hint":"{category:str, quantity:int}"} )
 
-    final_output = {
-        "id": result.get("id"),
-        "final_answer": result.get("final_answer"),
-        "sql": result.get("sql_query",""),
-        "confidence": result.get("confidence", 0.0),
-        "explanation": result.get("explanation"),
-        "citation": result.get("citations", [])
-    }
+    # final_output = {
+    #     "id": result.get("id"),
+    #     "final_answer": result.get("final_answer"),
+    #     "sql": result.get("sql_query",""),
+    #     "confidence": result.get("confidence", 0.0),
+    #     "explanation": result.get("explanation"),
+    #     "citation": result.get("citations", [])
+    # }
 
-    print(final_output)
+    # print(final_output)
+
+
+
+    thread_config = {"configurable": {"thread_id": "1"}}
+    init_state={"id":"hybrid_top_category_qty_summer_1997","question":"hybird question, During 'Summer Beverages 1997' as defined in the marketing calendar, which product category had the highest total quantity sold? Return {category:str, quantity:int}.","format_hint":"{category:str, quantity:int}"} 
+
+    print(app.get_graph().draw_mermaid())
+
+    # for event in app.stream(init_state, config=thread_config):
+    #     for key, value in event.items():
+    #         print(f"\nNode '{key}':")
+    #         print(value)
+

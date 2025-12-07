@@ -6,6 +6,10 @@ from agent.dspy_signatures import RouterModule,SynthesizerModule,PlannerModule,N
 from dotenv import load_dotenv
 import json
 from agent.llm_set_up import load_llm_gemini
+from agent.tools.repair import repair_issue
+from langgraph.checkpoint.memory import MemorySaver
+
+memory = MemorySaver()
 load_dotenv()
 
 
@@ -19,58 +23,7 @@ sql_tool = SQLiteTool()
 synth = SynthesizerModule()
 
 
-# def repair_node(state: State):
-#     """
-#     Retry SQL generation + execution if:
-#       - SQL error
-#       - Empty SQL query
-#       - Rows empty in SQL mode
-#     Retries up to 2 times.
-#     """
-#     mode = state.get("mode", "hybrid")
-#     retries = state.get("retries", 0)
-#     print("repair node called, current retries:", retries)
 
-#     if mode == "rag":
-#         return state
-
-#     if retries >= 2:
-#         return state
-
-#     sql_result = state.get("sql_result", {})
-#     sql_success = sql_result.get("success", False)
-#     sql_query = sql_result.get("sql", "")
-#     rows = sql_result.get("rows", [])
-
-#     needs_repair = False
-
-#     if not sql_query:
-#         needs_repair = True
-#     elif not sql_success:
-#         needs_repair = True
-#     elif mode == "sql" and len(rows) == 0:
-#         needs_repair = True
-
-#     if not needs_repair:
-#         return state
-
-#     retries += 1
-#     state["retries"] = retries
-
-#     question = state["question"]
-#     planner_output = state.get("planner_output", {})
-#     schema_str = str(db.get_schema())
-
-#     new_sql = nl_to_sql(question, planner_output, schema_str)
-#     new_query = new_sql.get("sql_query", "")
-
-#     state["sql_query"] = new_query
-
-#     state["sql_result"] = db.run_sql(new_query)
-
-#     print("Repair attempt", retries, "generated new SQL:", new_query)
-
-    # return state
 # ------------------------------------------------------------
 # 1. Define State
 # ------------------------------------------------------------
@@ -106,18 +59,20 @@ def retriever_node(state: State) -> dict:
 
 
 def planner_node(state: State) -> dict:
-    print("Planner node activated")
+    # print("Planner node activated")
     plan = planner(question=state["question"])
     return {"planner_output": plan}
 
 
 def nl_to_sql_node(state: State) -> dict:
     dbschema = sql_tool.get_schema()
+    past_results=state.get("sql_result", {}) if "sql_result" in state else ""
     sql = nl_to_sql(
         question=state["question"],
         planner_output=state["planner_output"],
         dbschema=dbschema,
         rag_chunks=state.get("rag_chunks", []),
+        past_results=past_results,
     )['sql_query']
     return {"sql_query": sql}
 
@@ -131,7 +86,7 @@ def synth_node(state: State) -> dict:
     out = synth.forward(
         question=state["question"],
         mode=state["mode"],
-        format_hint=state.get("format_hint", "object"),
+        format_hint=state.get("format_hint", ""),
         planner_output=state.get("planner_output", {}),
         rag_chunks=state.get("rag_chunks", []),
         sql_result=state.get("sql_result", {"success": False, "rows": [], "sql": ""}),
@@ -153,9 +108,29 @@ def synth_node(state: State) -> dict:
     }
 
 
+def refactor_node(state: State) -> dict:
+    retries = state.get("retries", 0)
+
+    if retries >= 2:
+        return {"route": "end"}
+
+    next_step = repair_issue(state)
+
+    if next_step is None:
+        print("No issues detected. Ending.")
+        return {"route": "end"}
+    
+    print(f"Issue detected. Routing to: {next_step}")
+    return {
+        "route": next_step,
+        "retries": retries + 1
+    }
+
+
 def end_node(state: State) -> dict:
     print("\nFINAL STATE:\n", state, "\n")
     return {}
+
 
 
 # ------------------------------------------------------------
@@ -178,6 +153,9 @@ def route_after_retriever(state: State):
     else:
         return "go_planner"
 
+
+
+    
 # ------------------------------------------------------------
 # 4. Build Dynamic Graph
 # ------------------------------------------------------------
@@ -191,6 +169,7 @@ graph.add_node("planner", planner_node)
 graph.add_node("nl2sql", nl_to_sql_node)
 graph.add_node("execute_sql", sql_node)
 graph.add_node("synth", synth_node)
+graph.add_node("refactor", refactor_node)
 graph.add_node("end", end_node)
 
 graph.set_entry_point("router")
@@ -211,7 +190,7 @@ graph.add_conditional_edges(
     "retriever",
     route_after_retriever,
     {
-        "rag_end": "synth", # RAG mode= end
+        "rag_end": "synth", # RAG mode => to end
         "go_planner": "planner", # SQL mode (normally) and HYBIRD
     }
 )
@@ -222,8 +201,20 @@ graph.add_edge("planner", "nl2sql")
 graph.add_edge("nl2sql", "execute_sql")
 graph.add_edge("execute_sql", "synth")
 
+graph.add_edge("synth", "refactor")
+
+graph.add_conditional_edges(
+    "refactor",
+    lambda s: s["route"],
+    {
+        "nl2sql": "nl2sql",
+        "synth": "synth",
+        "end": "end"
+    }
+)
+
 # --- ENDING ---
-graph.add_edge("synth", "end")
 graph.add_edge("end", END)
 
-app = graph.compile()
+app = graph.compile(checkpointer=memory)
+# print(app.get_graph().draw_mermaid())
