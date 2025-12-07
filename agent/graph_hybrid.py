@@ -49,7 +49,7 @@ class State(TypedDict, total=False):
 
 def router_node(state: State) -> dict:
     mode = router(question=state["question"])["mode"]
-    print("Router selected mode:", mode)
+    # print("Router selected mode:", mode)
     return {"mode": mode}
 
 
@@ -117,18 +117,47 @@ def refactor_node(state: State) -> dict:
     next_step = repair_issue(state)
 
     if next_step is None:
-        print("No issues detected. Ending.")
+        # print("No issues detected. Ending.")
         return {"route": "end"}
     
-    print(f"Issue detected. Routing to: {next_step}")
+    # print(f"Issue detected. Routing to: {next_step}")
     return {
         "route": next_step,
         "retries": retries + 1
     }
 
+def evaluate_node(state: State) -> dict:
+    confidence = 0.5
+    mode= state.get("mode", "hybrid")
+    sql_result = state.get("sql_result", {})
+    rag_chunks = state.get("rag_chunks", [])
+    retries = state.get("retries", 0)
+
+    confidence -= 0.05 * retries
+
+    # SQL evaluating
+    if mode in ("sql", "hybrid"):
+        if not sql_result.get("success", False):
+            confidence -= 0.1
+        elif len(sql_result.get("rows", [])) == 0:
+            confidence -= 0.1
+    
+    # Chunks evaluating
+    if mode in ("rag", "hybrid"):
+        if len(rag_chunks) == 0:
+            confidence -= 0.1
+        
+        if len(rag_chunks) > 0:
+            scores=[chunk.get("score", 0.0) for chunk in rag_chunks]
+            avg_score = sum(scores)/len(scores) if scores else 0.0
+            rag_contribution = min(0.2, avg_score / 20.0)
+            confidence += rag_contribution
+
+    final_confidence = max(0.01, min(1.0, confidence))
+    return {"confidence": final_confidence}
 
 def end_node(state: State) -> dict:
-    print("\nFINAL STATE:\n", state, "\n")
+    print("\nFINAL OUTPUT:\n", "id: ",state['id'], "\n", "final_answer: ", state['final_answer'],"\n", "explanation: ", state.get('explanation',""), "\n", "citations: ", state.get('citations',[]), "\n", "sql: ", state.get('sql_query',""), "\n", "confidence: ", state.get('confidence',0.0))
     return {}
 
 
@@ -169,6 +198,7 @@ graph.add_node("planner", planner_node)
 graph.add_node("nl2sql", nl_to_sql_node)
 graph.add_node("execute_sql", sql_node)
 graph.add_node("synth", synth_node)
+graph.add_node("evaluator", evaluate_node)
 graph.add_node("refactor", refactor_node)
 graph.add_node("end", end_node)
 
@@ -201,7 +231,8 @@ graph.add_edge("planner", "nl2sql")
 graph.add_edge("nl2sql", "execute_sql")
 graph.add_edge("execute_sql", "synth")
 
-graph.add_edge("synth", "refactor")
+graph.add_edge("synth", "evaluator") 
+graph.add_edge("evaluator", "refactor") 
 
 graph.add_conditional_edges(
     "refactor",

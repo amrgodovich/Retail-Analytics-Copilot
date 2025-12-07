@@ -113,8 +113,8 @@ if __name__ == "__main__":
 
     print(app.get_graph().draw_mermaid())
 
-    # for event in app.stream(init_state, config=thread_config):
-    #     for key, value in event.items():
-    #         print(f"\nNode '{key}':")
-    #         print(value)
+    for event in app.stream(init_state, config=thread_config):
+        for key, value in event.items():
+            print(f"\nNode '{key}':")
+            print(value)
 
