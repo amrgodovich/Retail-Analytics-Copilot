@@ -108,10 +108,10 @@ if __name__ == "__main__":
 
 
 
+    print(app.get_graph().draw_mermaid())
     thread_config = {"configurable": {"thread_id": "1"}}
     init_state={"id":"hybrid_top_category_qty_summer_1997","question":"hybird question, During 'Summer Beverages 1997' as defined in the marketing calendar, which product category had the highest total quantity sold? Return {category:str, quantity:int}.","format_hint":"{category:str, quantity:int}"} 
 
-    print(app.get_graph().draw_mermaid())
 
     for event in app.stream(init_state, config=thread_config):
         for key, value in event.items():

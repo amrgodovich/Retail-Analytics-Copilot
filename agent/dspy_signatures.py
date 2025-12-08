@@ -18,6 +18,7 @@ class RouterModule(dspy.Module):
     
         return {"mode": mode}
 
+
 class PlannerSignature(dspy.Signature):
     """ -date ranges
         - category
@@ -30,7 +31,6 @@ class PlannerSignature(dspy.Signature):
     category = OutputField(desc="product category or item, e.g., Beverages, Produce, Dairy")
     kpi = OutputField(desc="sales, revenue, orders, margin, etc.")
     filters = OutputField(desc="any additional filters like customer name, region, employee")
-
 
 class PlannerModule(dspy.Module):
     def __init__(self):
@@ -46,9 +46,6 @@ class PlannerModule(dspy.Module):
             "kpi": result.kpi,
             "filters": result.filters
         }
-
-
-
 
 
 class SynthesizerSignature(dspy.Signature):
@@ -72,7 +69,6 @@ class SynthesizerSignature(dspy.Signature):
     
     answer_json= OutputField(desc="JSON string with final_answer (matching format_hint), citations, explanation(not more than two sentences)")
 
-
 class SynthesizerModule(dspy.Module):
     def __init__(self):
         super().__init__()
@@ -90,8 +86,7 @@ class SynthesizerModule(dspy.Module):
         # print("synth result:", result)
         return result
     
-
-
+    
 class NLtoSQLSignature(dspy.Signature):
     question = InputField(desc="the user question")
     planner_output = InputField(desc="the extracted constraints from the planner")

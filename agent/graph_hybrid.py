@@ -23,10 +23,6 @@ sql_tool = SQLiteTool()
 synth = SynthesizerModule()
 
 
-
-# ------------------------------------------------------------
-# 1. Define State
-# ------------------------------------------------------------
 class State(TypedDict, total=False):
     id: str
     question: str
@@ -43,9 +39,8 @@ class State(TypedDict, total=False):
     retries: int
 
 
-# ------------------------------------------------------------
-# 2. Graph Nodes
-# ------------------------------------------------------------
+
+# Graph Nodes
 
 def router_node(state: State) -> dict:
     mode = router(question=state["question"])["mode"]
@@ -162,9 +157,8 @@ def end_node(state: State) -> dict:
 
 
 
-# ------------------------------------------------------------
-# 3. Conditional Routing Logic
-# ------------------------------------------------------------
+# Routing Logic
+
 
 def route_after_router(state: State):
     mode = state.get("mode")
@@ -185,9 +179,9 @@ def route_after_retriever(state: State):
 
 
     
-# ------------------------------------------------------------
-# 4. Build Dynamic Graph
-# ------------------------------------------------------------
+
+# Build Graph
+
 
 graph = StateGraph(State)
 
@@ -204,7 +198,7 @@ graph.add_node("end", end_node)
 
 graph.set_entry_point("router")
 
-# --- DYNAMIC BRANCHES ---
+# --- ROUTERING ---
 graph.add_conditional_edges(
     "router",
     route_after_router,
@@ -234,6 +228,8 @@ graph.add_edge("execute_sql", "synth")
 graph.add_edge("synth", "evaluator") 
 graph.add_edge("evaluator", "refactor") 
 
+
+# --- REPAIRING LOOP ---
 graph.add_conditional_edges(
     "refactor",
     lambda s: s["route"],
@@ -247,5 +243,6 @@ graph.add_conditional_edges(
 # --- ENDING ---
 graph.add_edge("end", END)
 
-app = graph.compile(checkpointer=memory)
+# app = graph.compile(checkpointer=memory)
 # print(app.get_graph().draw_mermaid())
+app = graph.compile()

@@ -5,9 +5,17 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+
+try:
+    stopwords.words("english")
+except LookupError:
+    nltk.download("stopwords")
+
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 stemmer = PorterStemmer()
-nltk.download('stopwords')
-nltk.download('punkt_tab')
 stop_words = set(stopwords.words('english'))
 
 class BM25Retriever:
