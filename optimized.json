@@ -1,0 +1,28 @@
+{
+  "predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Routing the graph between Rag, SQL and Hybird ",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "the user question"
+        },
+        {
+          "prefix": "Mode:",
+          "description": "to answer this question, should we use rag using documents of the company, sql query from our database, or hybrid, answer with one choice/word from tese ['rag','sql','hybrid']"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.10",
+      "dspy": "3.0.4",
+      "cloudpickle": "3.1"
+    }
+  }
+}
