@@ -5,6 +5,7 @@ AI agent that answers retail analytics questions by combining Retrieval-Augmente
 ## Graph Design
 
   ![alt text](<Pics/graph.png>)
+
 The agent implements a **hybrid multi-node architecture** with intelligent routing and self-repair capabilities:
 
 - **Router Node (DSPy)**: Classifies incoming questions into three modes: `rag` (document-only), `sql` (database-only), or `hybrid` (both sources required)
