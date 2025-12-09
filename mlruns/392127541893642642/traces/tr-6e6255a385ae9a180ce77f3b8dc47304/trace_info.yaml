@@ -1,0 +1,13 @@
+execution_duration_ms: 41
+request_preview: '{"question": "hybird question, During ''Summer Beverages 1997''
+  as defined in the marketing calendar, which product category had the highest total
+  quantity sold? Return {category:str, quantity:int}."}'
+request_time: '2025-12-09T00:05:16.954Z'
+response_preview: '{"start_date": "1997-06-21", "end_date": "1997-09-22", "category":
+  "", "kpi": "quantity", "filters": ""}'
+state: OK
+trace_id: tr-6e6255a385ae9a180ce77f3b8dc47304
+trace_location:
+  mlflow_experiment:
+    experiment_id: '392127541893642642'
+  type: MLFLOW_EXPERIMENT

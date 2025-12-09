@@ -1,0 +1,25 @@
+execution_duration_ms: 60
+request_preview: '{"question": "hybird question, During ''Summer Beverages 1997''
+  as defined in the marketing calendar, which product category had the highest total
+  quantity sold? Return {category:str, quantity:int}.", "planner_output": {"start_date":
+  "1997-06-21", "end_date": "1997-09-22", "category": "", "kpi": "quantity", "filters":
+  ""}, "dbschema": {"Categories": [{"name": "CategoryID", "type": "INTEGER"}, {"name":
+  "CategoryName", "type": "TEXT"}, {"name": "Description", "type": "TEXT"}, {"name":
+  "Picture", "type": "BLOB"}], "sqlite_sequence": [{"name": "name", "type": ""}, {"name":
+  "seq", "type": ""}], "CustomerCustomerDemo": [{"name": "CustomerID", "type": "TEXT"},
+  {"name": "CustomerTypeID", "type": "TEXT"}], "CustomerDemographics": [{"name": "CustomerTypeID",
+  "type": "TEXT"}, {"name": "CustomerDesc", "type": "TEXT"}], "Customers": [{"name":
+  "CustomerID", "type": "TEXT"}, {"name": "CompanyName", "type": "TEXT"}, {"name":
+  "ContactName", "type": "TEXT"}, {"name": "ContactTitle", "type": "TEXT"}, {"...'
+request_time: '2025-12-09T00:05:18.444Z'
+response_preview: '{"sql_query": "SELECT\n  C.CategoryName AS category,\n  SUM(OD.Quantity)
+  AS quantity\nFROM Orders AS O\nJOIN \"Order Details\" AS OD\n  ON O.OrderID = OD.OrderID\nJOIN
+  Products AS P\n  ON OD.ProductID = P.ProductID\nJOIN Categories AS C\n  ON P.CategoryID
+  = C.CategoryID\nWHERE\n  O.OrderDate BETWEEN ''1997-06-21'' AND ''1997-09-22''\nGROUP
+  BY\n  C.CategoryName\nORDER BY\n  quantity DESC\nLIMIT 1;"}'
+state: OK
+trace_id: tr-e21994237611eda93c0d76bb020ec193
+trace_location:
+  mlflow_experiment:
+    experiment_id: '392127541893642642'
+  type: MLFLOW_EXPERIMENT

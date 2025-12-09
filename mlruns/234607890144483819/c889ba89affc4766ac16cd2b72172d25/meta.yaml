@@ -1,0 +1,14 @@
+artifact_uri: file:///d:/Amr/ITI/Retail Analytics Copilot/mlruns/234607890144483819/c889ba89affc4766ac16cd2b72172d25/artifacts
+end_time: 1765240399774
+entry_point_name: ''
+experiment_id: '234607890144483819'
+lifecycle_stage: active
+run_id: c889ba89affc4766ac16cd2b72172d25
+run_name: Experiment_12-09-25_02-33-17
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1765240399572
+status: 4
+tags: []
+user_id: User

@@ -1,0 +1,28 @@
+{
+  "rag_chunks": [
+    {
+      "id": "chunk0",
+      "filename": "catalog",
+      "score": 5.5441168157928065,
+      "text": "# Catalog Snapshot\n- Categories include Beverages, Condiments, Confections, Dairy Products, Grains/Cereals, Meat/Poultry, Produce, Seafood.\n- Products map to categories as in the Northwind DB."
+    },
+    {
+      "id": "chunk5",
+      "filename": "marketing_calendar",
+      "score": 4.901441514307677,
+      "text": "# Northwind Marketing Calendar (1997)"
+    },
+    {
+      "id": "chunk8",
+      "filename": "product_policy",
+      "score": 2.625186062796061,
+      "text": "# Returns & Policy\n- Perishables (Produce, Seafood, Dairy): 3\u20137 days.\n- Beverages unopened: 14 days; opened: no returns.\n- Non-perishables: 30 days."
+    },
+    {
+      "id": "chunk3",
+      "filename": "kpi_definitions",
+      "score": 2.2633617719717574,
+      "text": "- AOV = SUM(UnitPrice * Quantity * (1 - Discount)) / COUNT(DISTINCT OrderID)"
+    }
+  ]
+}

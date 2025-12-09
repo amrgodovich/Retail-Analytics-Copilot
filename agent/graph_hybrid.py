@@ -8,10 +8,20 @@ import json
 from agent.llm_set_up import load_llm_gemini
 from agent.tools.repair import repair_issue
 from langgraph.checkpoint.memory import MemorySaver
-
 memory = MemorySaver()
 load_dotenv()
 
+def generate_experiment_name():
+    from datetime import datetime
+    now = datetime.now()
+    timestamp = now.strftime("%m-%d-%y_%H-%M-%S")
+    return f"Experiment_{timestamp}"
+
+experment_name=generate_experiment_name()
+import mlflow
+mlflow.dspy.autolog()
+mlflow.set_tracking_uri("file:///d:/Amr/ITI/Retail Analytics Copilot/mlruns")
+mlflow.set_experiment(experment_name)
 
 load_llm_gemini()
 db = SQLiteTool("data/northwind.sqlite")
