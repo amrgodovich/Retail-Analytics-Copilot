@@ -4,7 +4,7 @@ AI agent that answers retail analytics questions by combining Retrieval-Augmente
 
 ## Graph Design
 
-  ![alt text](<graph.png>)
+  ![alt text](<Pics/graph.png>)
 The agent implements a **hybrid multi-node architecture** with intelligent routing and self-repair capabilities:
 
 - **Router Node (DSPy)**: Classifies incoming questions into three modes: `rag` (document-only), `sql` (database-only), or `hybrid` (both sources required)
@@ -18,6 +18,9 @@ The agent implements a **hybrid multi-node architecture** with intelligent routi
 - **End Node**: Outputs final structured results with audit trail
 
 **Flow Logic**: The router determines the path—pure RAG questions skip SQL nodes, pure SQL questions skip retrieval, and hybrid questions use both pipelines. After synthesis, the refactor node validates output and repairs issues before termination.
+
+**Tracing**: Using MLflow built-in dspy autolog, it enables tracing each node's input & output. All within one experiemnt labeled by the date and time of the run.
+      ![alt text](Pics/mlflow_snapshot.png)
 
 ## DSPy Optimization
 
@@ -51,7 +54,7 @@ Each result in `outputs_hybrid.jsonl` follows the contract:
   "id": "rag_policy_beverages_return_days", "final_answer": 14,
   "sql": "",
   "confidence": 0.6718845466228789,
-  "explanation": "The product policy specifies a      14-day return window for unopened beverages. This information is directly stated in the 'Returns & Policy' document.",
+  "explanation": "The product policy specifies a 14-day return window for unopened beverages. This information is directly stated in the 'Returns & Policy' document.",
   "citation": ["product_policy::chunk8"]
 }
 
@@ -61,6 +64,13 @@ Each result in `outputs_hybrid.jsonl` follows the contract:
 ## Setup
 
 ```bash
+
+# running MLflow UI
+mlflow ui
+
+```
+
+```bash
 # Install dependencies
 pip install -r requirements.txt
 
@@ -68,7 +78,6 @@ pip install -r requirements.txt
 mkdir -p data
 curl -L -o data/northwind.sqlite \
   https://raw.githubusercontent.com/jpwhite3/northwind-SQLite3/main/dist/northwind.db
-
 
 ```
 
@@ -94,13 +103,13 @@ curl -L -o data/northwind.sqlite \
 └── requirements.txt
 ```
 
-## 🎯 Key Features
+## Key Features
  
 ✅ **Hybrid Intelligence** – Combines structured SQL with unstructured document retrieval  
 ✅ **Self-Repairing** – Automatically fixes SQL errors and format issues up to 2 iterations  
 ✅ **Typed Outputs** – Enforces exact format adherence (int, float, dict, list) with validation  
 ✅ **Auditable** – Full citation tracking for both database tables and document chunks  
-✅ **DSPy Optimized** – has ability to optimize any nodes
+✅ **DSPy Optimized** – has the ability to optimize any nodes in the future in case of new/local model.
 
 ## 📝 License
 
