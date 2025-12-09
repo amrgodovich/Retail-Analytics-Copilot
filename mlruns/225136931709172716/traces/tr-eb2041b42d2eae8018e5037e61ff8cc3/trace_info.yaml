@@ -1,0 +1,23 @@
+execution_duration_ms: 34
+request_preview: '{"question": "According to the product policy, what is the return
+  window (days) for unopened Beverages? Return an integer.", "mode": "rag", "format_hint":
+  "int", "planner_output": {}, "rag_chunks": [{"id": "chunk8", "filename": "product_policy",
+  "score": 10.119206868473738, "text": "# Returns & Policy\n- Perishables (Produce,
+  Seafood, Dairy): 3–7 days.\n- Beverages unopened: 14 days; opened: no returns.\n-
+  Non-perishables: 30 days."}, {"id": "chunk0", "filename": "catalog", "score": 1.671285173461985,
+  "text": "# Catalog Snapshot\n- Categories include Beverages, Condiments, Confections,
+  Dairy Products, Grains/Cereals, Meat/Poultry, Produce, Seafood.\n- Products map
+  to categories as in the Northwind DB."}, {"id": "chunk7", "filename": "marketing_calendar",
+  "score": 1.0210397854851472, "text": "## Winter Classics 1997\n- Dates: 1997-12-01
+  to 1997-12-31\n- Notes: Push Dairy Products and Confections for holiday gifting."},
+  {"id": "chunk6", "filename": "marketing_calendar", "score": 0.939...'
+request_time: '2025-12-09T01:04:33.958Z'
+response_preview: '{"answer_json": "{\"final_answer\": 14, \"citations\": [\"product_policy::chunk8\"],
+  \"explanation\": \"The product policy specifies a 14-day return window for unopened
+  beverages. This information is directly stated in the ''Returns & Policy'' document.\"}"}'
+state: OK
+trace_id: tr-eb2041b42d2eae8018e5037e61ff8cc3
+trace_location:
+  mlflow_experiment:
+    experiment_id: '225136931709172716'
+  type: MLFLOW_EXPERIMENT
