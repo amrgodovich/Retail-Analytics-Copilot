@@ -1,4 +1,4 @@
 venv/
 .env
-test_summarize.ipynb
 deployment.py
+test_summarize.ipynb
