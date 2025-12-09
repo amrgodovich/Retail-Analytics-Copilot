@@ -20,20 +20,21 @@ The agent implements a **hybrid multi-node architecture** with intelligent routi
 
 **Flow Logic**: The router determines the path—pure RAG questions skip SQL nodes, pure SQL questions skip retrieval, and hybrid questions use both pipelines. After synthesis, the refactor node validates output and repairs issues before termination.
 
-**Tracing**: Using MLflow built-in dspy autolog, it enables tracing each node's input & output. All within one experiemnt labeled by the date and time of the run.
+**Tracing**: Using MLflow built-in dspy autolog, it enabled tracing each node's input & output. All within one experiemnt labeled by the date and time of the run.
       ![alt text](Pics/mlflow_snapshot.png)
 
 ## DSPy Optimization
 
 **Optimized Module**: **Router Node** 
 
-**Optimization Strategy**: Applied **MIPROv2** to improve routing decision.
+**Optimization Strategy**: Applied **MIPROv2** to improve routing decision. This step is done at the notebook `optimizing_router_node.ipynb`
 
 
 **Training Data**: 15 labeled questions
 
 **Key Improvements**:
 - The optimizer did not add so much as the model was already efficient enough.
+- The optimized module file was dumped as `optimized.json`
 
 
 
@@ -101,21 +102,14 @@ curl -L -o data/northwind.sqlite \
 ├── sample_questions_hybrid_eval.jsonl
 ├── outputs_hybrid.jsonl         # Generated results
 ├── run_agent_hybrid.py          # CLI entrypoint
+├── optimized.json               # Optimized Router module
 └── requirements.txt
 ```
 
 ## Key Features
  
-✅ **Hybrid Intelligence** – Combines structured SQL with unstructured document retrieval  
-✅ **Self-Repairing** – Automatically fixes SQL errors and format issues up to 2 iterations  
-✅ **Typed Outputs** – Enforces exact format adherence (int, float, dict, list) with validation  
-✅ **Auditable** – Full citation tracking for both database tables and document chunks  
-✅ **DSPy Optimized** – has the ability to optimize any nodes in the future in case of new/local model.
-
-## 📝 License
-
-MIT License - Educational project for AI/ML coursework
-
----
-
-**Built with**: DSPy 2.4+ | LangGraph 0.1+ | Ollama (Phi-3.5) | SQLite | BM25
+- **Hybrid Intelligence** – Combines structured SQL with unstructured document retrieval  
+- **Self-Repairing** – Automatically fixes SQL errors and format issues up to 2 iterations  
+- **Typed Outputs** – Enforces exact format adherence (int, float, dict, list) with validation  
+- **Auditable** – Full citation tracking for both database tables and document chunks  
+- **DSPy Optimized** – has the ability to optimize any nodes in the future in case of new/local model.
