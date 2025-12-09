@@ -1,0 +1,21 @@
+execution_duration_ms: 11784
+request_preview: '{"old_history": "The user inquired about the return window for unopened
+  beverages according to the product policy. The agent confirmed that the return window
+  for unopened beverages is 14 days.", "question": "what is the most product sold
+  in year 1990? Return an string.", "result": {"id": "f8fffd3f-ee04-40dd-93c9-125a725518c1_12-10-25_00-26-44",
+  "question": "what is the most product sold in year 1990? Return an string.", "mode":
+  "sql", "planner_output": {"start_date": "1990-01-01", "end_date": "1990-12-31",
+  "category": "Product", "kpi": "Quantity", "filters": ""}, "sql_query": "SELECT T2.ProductName\nFROM
+  \"Order Details\" AS T1\nINNER JOIN Products AS T2\n  ON T1.ProductID = T2.ProductID\nINNER
+  JOIN Orders AS T3\n  ON T1.OrderID = T3.OrderID\nWHERE\n  STRFTIME(''%Y'', T3.OrderDate)
+  = ''1990''\nGROUP BY\n  T2.ProductName\nORDER BY\n  SUM(T1.Quantity) DESC\nLIMIT
+  1;", "sql_result": {"success": true, "rows": [], "error": "", "sql": "SELECT T2.ProductName\nFROM
+  \"Order Details\" AS T1\nINNE...'
+request_time: '2025-12-09T22:26:49.278Z'
+response_preview: ''
+state: ERROR
+trace_id: tr-52815a7873ecf6af703e02104249ab6f
+trace_location:
+  mlflow_experiment:
+    experiment_id: '324520559805153159'
+  type: MLFLOW_EXPERIMENT

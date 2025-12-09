@@ -69,7 +69,11 @@ def run_batch(input_path, output_path):
 # ------------------------------------------------------------
 # CLI
 # ------------------------------------------------------------
+from dotenv import load_dotenv
+from agent.llm_set_up import load_llm_gemini
 if __name__ == "__main__":
+    load_dotenv()
+    load_llm_gemini()
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--batch", type=str, required=True)

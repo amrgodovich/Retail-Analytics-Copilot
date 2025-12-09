@@ -4,12 +4,13 @@ from agent.rag.retrieval import BM25Retriever
 from agent.tools.sqlite_tool import SQLiteTool
 from agent.dspy_signatures import RouterModule,SynthesizerModule,PlannerModule,NLtoSQLModule
 from dotenv import load_dotenv
-import json
 from agent.llm_set_up import load_llm_gemini
+import json
 from agent.tools.repair import repair_issue
 from langgraph.checkpoint.memory import MemorySaver
-memory = MemorySaver()
-load_dotenv()
+# memory = MemorySaver()
+# load_dotenv()
+# load_llm_gemini()
 
 def generate_experiment_name():
     from datetime import datetime
@@ -23,7 +24,6 @@ mlflow.dspy.autolog()
 mlflow.set_tracking_uri("file:///d:/Amr/ITI/Retail Analytics Copilot/mlruns")
 mlflow.set_experiment(experment_name)
 
-# load_llm_gemini()
 db = SQLiteTool("data/northwind.sqlite")
 router = RouterModule()
 retriever = BM25Retriever()
@@ -47,7 +47,7 @@ class State(TypedDict, total=False):
     citations: list
     confidence: float
     retries: int
-    past_results: str
+    history: str
 
 
 # Graph Nodes
@@ -89,6 +89,7 @@ def sql_node(state: State) -> dict:
 
 def synth_node(state: State) -> dict:
     out = synth.forward(
+        history=state.get("history",""),
         question=state["question"],
         mode=state["mode"],
         format_hint=state.get("format_hint", ""),

@@ -1,0 +1,11 @@
+execution_duration_ms: 72
+request_preview: '{"question": "what is the most product sold in year 1990? Return
+  an string."}'
+request_time: '2025-12-09T22:26:44.018Z'
+response_preview: '{"mode": "sql"}'
+state: OK
+trace_id: tr-fe96dad0992838f1837d6252f67c69e7
+trace_location:
+  mlflow_experiment:
+    experiment_id: '324520559805153159'
+  type: MLFLOW_EXPERIMENT

@@ -66,6 +66,7 @@ class SynthesizerSignature(dspy.Signature):
     planner_output=  InputField(desc="Extracted constraints: date ranges, categories, KPIs")
     rag_chunks= InputField(desc="Retrieved doc chunks: [{id, text, source}, ...]")
     sql_result=  InputField(desc="SQL execution result: {success, rows, error, sql}")
+    history= InputField(desc="the previous conversation history between the user and the agent")
     
     answer_json= OutputField(desc="JSON string with final_answer (matching format_hint), citations, explanation(not more than two sentences)")
 
@@ -74,7 +75,7 @@ class SynthesizerModule(dspy.Module):
         super().__init__()
         self.predict = Predict(SynthesizerSignature)
 
-    def forward(self, question, mode, format_hint, planner_output, rag_chunks, sql_result):
+    def forward(self, question, mode, format_hint, planner_output, rag_chunks, sql_result,history):
         result = self.predict(
             question=question,
             mode=mode,
@@ -82,6 +83,7 @@ class SynthesizerModule(dspy.Module):
             planner_output=planner_output,
             rag_chunks=rag_chunks,
             sql_result=sql_result,
+            history=history
         )
         # print("synth result:", result)
         return result

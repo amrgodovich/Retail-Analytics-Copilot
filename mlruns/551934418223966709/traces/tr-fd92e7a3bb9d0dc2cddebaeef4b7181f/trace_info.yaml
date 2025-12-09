@@ -1,0 +1,11 @@
+execution_duration_ms: 11916
+request_preview: '{"question": "According to the product policy, what is the return
+  window in weeks for unopened Beverages? Return an integer."}'
+request_time: '2025-12-09T22:40:54.917Z'
+response_preview: ''
+state: ERROR
+trace_id: tr-fd92e7a3bb9d0dc2cddebaeef4b7181f
+trace_location:
+  mlflow_experiment:
+    experiment_id: '551934418223966709'
+  type: MLFLOW_EXPERIMENT
