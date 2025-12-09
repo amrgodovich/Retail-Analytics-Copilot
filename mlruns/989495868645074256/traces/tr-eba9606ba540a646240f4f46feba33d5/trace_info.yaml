@@ -1,0 +1,11 @@
+execution_duration_ms: 1805
+request_preview: '{"question": "show me customers with highest orders"}'
+request_time: '2025-12-09T14:33:35.022Z'
+response_preview: '{"start_date": "", "end_date": "", "category": "", "kpi": "orders",
+  "filters": ""}'
+state: OK
+trace_id: tr-eba9606ba540a646240f4f46feba33d5
+trace_location:
+  mlflow_experiment:
+    experiment_id: '989495868645074256'
+  type: MLFLOW_EXPERIMENT

@@ -23,7 +23,7 @@ mlflow.dspy.autolog()
 mlflow.set_tracking_uri("file:///d:/Amr/ITI/Retail Analytics Copilot/mlruns")
 mlflow.set_experiment(experment_name)
 
-load_llm_gemini()
+# load_llm_gemini()
 db = SQLiteTool("data/northwind.sqlite")
 router = RouterModule()
 retriever = BM25Retriever()
@@ -47,7 +47,7 @@ class State(TypedDict, total=False):
     citations: list
     confidence: float
     retries: int
-
+    past_results: str
 
 
 # Graph Nodes

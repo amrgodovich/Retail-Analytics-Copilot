@@ -1,0 +1,27 @@
+execution_duration_ms: 2917
+request_preview: '{"question": "show me customers with highest orders", "mode": "sql",
+  "format_hint": "", "planner_output": {"start_date": "", "end_date": "", "category":
+  "", "kpi": "orders", "filters": ""}, "rag_chunks": [], "sql_result": {"success":
+  true, "rows": [{"CompanyName": "B''s Beverages", "NumberOfOrders": 210}, {"CompanyName":
+  "Ricardo Adocicados", "NumberOfOrders": 203}, {"CompanyName": "LILA-Supermercado",
+  "NumberOfOrders": 203}, {"CompanyName": "Gourmet Lanchonetes", "NumberOfOrders":
+  202}, {"CompanyName": "Princesa Isabel Vinhos", "NumberOfOrders": 200}], "error":
+  "", "sql": "SELECT T1.CompanyName, COUNT(T2.OrderID) AS NumberOfOrders\nFROM Customers
+  AS T1\nINNER JOIN Orders AS T2\n  ON T1.CustomerID = T2.CustomerID\nGROUP BY\n  T1.CustomerID\nORDER
+  BY\n  NumberOfOrders DESC\nLIMIT 5;"}}'
+request_time: '2025-12-09T14:33:41.383Z'
+response_preview: '{"answer_json": "{\n  \"final_answer\": [\n    {\n      \"CompanyName\":
+  \"B''s Beverages\",\n      \"NumberOfOrders\": 210\n    },\n    {\n      \"CompanyName\":
+  \"Ricardo Adocicados\",\n      \"NumberOfOrders\": 203\n    },\n    {\n      \"CompanyName\":
+  \"LILA-Supermercado\",\n      \"NumberOfOrders\": 203\n    },\n    {\n      \"CompanyName\":
+  \"Gourmet Lanchonetes\",\n      \"NumberOfOrders\": 202\n    },\n    {\n      \"CompanyName\":
+  \"Princesa Isabel Vinhos\",\n      \"NumberOfOrders\": 200\n    }\n  ],\n  \"citations\":
+  [\n    \"Customers\",\n    \"Orders\"\n  ],\n  \"explanation\": \"The top 5 customers
+  with the highest number of orders have been retrieved from the database. B''s Beverages
+  has the most orders with 210.\"\n}"}'
+state: OK
+trace_id: tr-44210f278b06dc9ec5ef437d2e859b5f
+trace_location:
+  mlflow_experiment:
+    experiment_id: '989495868645074256'
+  type: MLFLOW_EXPERIMENT
