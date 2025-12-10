@@ -1,8 +1,0 @@
-{
-  "sql_result": {
-    "success": true,
-    "rows": [],
-    "error": "",
-    "sql": "SELECT\n  C.CategoryName AS category,\n  SUM(OD.Quantity) AS quantity\nFROM Orders AS O\nJOIN \"Order Details\" AS OD\n  ON O.OrderID = OD.OrderID\nJOIN Products AS P\n  ON OD.ProductID = P.ProductID\nJOIN Categories AS C\n  ON P.CategoryID = C.CategoryID\nWHERE\n  O.OrderDate BETWEEN '1997-06-21' AND '1997-09-22'\nGROUP BY\n  C.CategoryName\nORDER BY\n  quantity DESC\nLIMIT 1;"
-  }
-}
