@@ -2,3 +2,4 @@ venv/
 .env
 deployment.py
 test_summarize.ipynb
+mlruns/
