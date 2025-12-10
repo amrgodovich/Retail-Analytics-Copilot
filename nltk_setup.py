@@ -1,14 +1,7 @@
 import nltk
-# Explicitly download the 'punkt' resource
-try:
-    nltk.download('punkt')
-except Exception as e:
-    print(f"Error downloading punkt: {e}")
+nltk.data.path.append("nltk_data")
 
-# Download any other resources your code uses
-try:
-    nltk.download('stopwords')
-except Exception as e:
-    print(f"Error downloading stopwords: {e}")
+resources = ["punkt", "punkt_tab", "stopwords"]
 
-print("NLTK data setup complete.")
+for r in resources:
+    nltk.download(r, download_dir="nltk_data")

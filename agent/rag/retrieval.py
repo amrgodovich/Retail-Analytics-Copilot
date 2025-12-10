@@ -4,6 +4,7 @@ from rank_bm25 import BM25Okapi
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+nltk.data.path.append("nltk_data")
 
 
 try:
